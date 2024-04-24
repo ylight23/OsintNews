@@ -26,20 +26,27 @@ class ViettanSpider(scrapy.Spider):
 
         item['title'] = response.css(
             'div.elementor-widget-container > h1 ::text').extract_first()  # Tên từng bài báo
-        item['image_url'] = response.css(
-            'div.elementor-image img:nth-of-type(2) ::attr(src)').extract_first()
+        
+        div_selector = response.css('div.elementor-image')[1]
+        item['image_url'] = div_selector.css('img::attr(src)').extract_first()
         item['content'] = response.css(
             'div.elementor-widget-container p::text').extract()
         item['url'] = response.css(
-            'article.elementor-post > a ::attr(href)').extract_first()
-        item['category'] = response.css(
-            "span.elementor-post-info__terms-list a:nth-of-type(3)::text").extract_first()
+            'div.elementor-post__text > h3 > a ::attr(href)').extract_first()
+        
+        category_selector = response.css('span.elementor-post-info__terms-list')[0]
+        item['category'] = category_selector.css(" a:nth-of-type(3)::text").extract_first()
 
         # item['author'] = response.xpath(
         #     "//div[@class='elementor-widget-container']//li[@itemprop='author']//span[@class='elementor-icon-list-text elementor-post-info__item elementor-post-info__item--type-author']/text()").get()
-        item['author'] = response.css(
-            'span.elementor-icon-list-text elementor-post-info__item elementor-post-info__item--type-author ::text').extract_first()
+        author_raw = response.css(
+            '.elementor-post-info__item--type-author ::text').extract_first()
+        if author_raw:
+            author_cleaned = author_raw.strip()
+            item['author'] = author_cleaned
+        else:
+            item['author'] = None
         item['sentiment'] = "tieu-cuc"
-        item['is_fake'] = "False"
+        item['is_fake'] = "True"
 
         yield item
