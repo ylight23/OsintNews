@@ -47,6 +47,13 @@ class ViettanSpider(scrapy.Spider):
         else:
             item['author'] = None
         item['sentiment'] = "tieu-cuc"
+        
         item['is_fake'] = "True"
-
+        
+        publish_raw = response.css('.elementor-post-info__item--type-date::text').extract_first()
+        if publish_raw:
+            publish_clean = publish_raw.strip()
+            item['published_at'] = publish_clean
+        else:
+            item['published_at'] = None
         yield item

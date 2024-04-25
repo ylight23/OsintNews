@@ -19,3 +19,5 @@ class OsintnewsItem(scrapy.Item):
     author = scrapy.Field()
     sentiment = scrapy.Field()
     is_fake = scrapy.Field()
+    published_at = scrapy.Field()
+    

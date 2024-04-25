@@ -7,6 +7,22 @@
 # useful for handling different item types with a single interface
 from itemadapter import ItemAdapter
 
+import json
+
+class JsonWriterPipeline:
+    def open_spider(self, spider):
+        self.file = open('result.json', 'w')
+        self.file.write("[\n")
+
+    def close_spider(self, spider):
+        self.file.write("\n]")
+        self.file.close()
+
+    def process_item(self, item, spider):
+        line = json.dumps(dict(item)) + ",\n"
+        self.file.write(line)
+        return item
+
 
 class OsintnewsPipeline:
     def process_item(self, item, spider):
